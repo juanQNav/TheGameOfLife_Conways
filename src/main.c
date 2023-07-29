@@ -6,14 +6,16 @@
 #include <stdbool.h>
 #include <math.h>
 
-#define VERTICAL_SIZE 1550
-#define HORIZONTAL_SIZE 1550
+#define VERTICAL_SIZE 1400
+#define HORIZONTAL_SIZE 1400
 
-#define NUMBER_CELLS 60
-#define CELL_SIZE (1.95/NUMBER_CELLS)
+#define NUMBER_CELLS 80
+#define CELL_SIZE (1.959/NUMBER_CELLS)
 
+//global var
 int cells [NUMBER_CELLS][NUMBER_CELLS];
 int cellsCopy[NUMBER_CELLS][NUMBER_CELLS];
+
 bool pause = false;
 
 // function prototypes
@@ -29,9 +31,7 @@ void update_cells_on_drag(double normalized_x, double normalized_y);
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
-//global var
-int cells [NUMBER_CELLS][NUMBER_CELLS];
-int cellsCopy[NUMBER_CELLS][NUMBER_CELLS];
+
 
 //main function
 int main() {
@@ -127,8 +127,10 @@ int main() {
     
     double lastUpdateTime = glfwGetTime();
     double updateInterval = 0.1; // Intervalo de actualización en segundos (ejemplo: 0.1 segundos)
+
     //main while loop
-    while (!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(window)) 
+    {
         double currentTime = glfwGetTime();
         if (!pause && (currentTime - lastUpdateTime) >= updateInterval) {
             glClearColor(0.09f, 0.09f, 0.09f, 1.0f);
@@ -140,6 +142,7 @@ int main() {
         }
 
         glClear(GL_COLOR_BUFFER_BIT);
+
         for (int i = 0; i < NUMBER_CELLS; i++) {
             for (int j = 0; j < NUMBER_CELLS; j++) {
                 float x = -1 * (1 - CELL_SIZE) + i * CELL_SIZE;
@@ -168,10 +171,10 @@ int main() {
 
 void drawSquare(bool withFill, float x, float y ) {
     if (withFill) {
-        glColor3f(1.0f, 1.0f, 1.0f);
+        glColor3f(0.8f, 0.8f, 0.8f);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     } else {
-        glColor3f(1.0f, 1.0f, 1.0f);
+        glColor3f(0.8f, 0.8f, 0.8f);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
@@ -197,6 +200,7 @@ void gameOfLife(int cells[NUMBER_CELLS][NUMBER_CELLS], int cellsCopy[NUMBER_CELL
 {
     int numberNeighbors = 0;
     float x = -1 * (1 - CELL_SIZE), y = (1 - CELL_SIZE - 0.02);
+
     for(int i = 0; i < NUMBER_CELLS; i++)
     {
         for(int j = 0; j < NUMBER_CELLS; j++)
@@ -211,16 +215,15 @@ void gameOfLife(int cells[NUMBER_CELLS][NUMBER_CELLS], int cellsCopy[NUMBER_CELL
                                  cells[(i) % NUMBER_CELLS][(j + 1) % NUMBER_CELLS] +\
                                  cells[(i + 1 ) % NUMBER_CELLS][(j + 1) % NUMBER_CELLS];
              if(cells[i][j] == 0 && numberNeighbors == 3)
-             {
                 cellsCopy[i][j] = 1;
-             } else if(cells[i][j] == 1 && (numberNeighbors > 3 || numberNeighbors < 2))
-             {
+             else if(cells[i][j] == 1 && (numberNeighbors > 3 || numberNeighbors < 2))
                 cellsCopy[i][j] = 0;
-             }
+
             if(cellsCopy[i][j] == 1)
                 drawSquare(true, x, y);
             else
                 drawSquare(false, x, y);
+
             x += CELL_SIZE;
         }
         x = -1 * (1 - CELL_SIZE);
@@ -234,8 +237,7 @@ void delay(int milliseconds)
     
     clock_t start_time = clock();
     
-    while (clock() < start_time + delay_clocks) {
-    }
+    while (clock() < start_time + delay_clocks) {}
 }
 
 void get_clicked_cell(double x_normalized, double y_normalized) 
@@ -244,9 +246,12 @@ void get_clicked_cell(double x_normalized, double y_normalized)
 
     double centered_x = x_normalized;
     double centered_y = y_normalized;
+
     int cell_x_index = (int)((centered_x + (1 - CELL_SIZE)) / cell_size);
     int cell_y_index = (int)((centered_y + (1 - CELL_SIZE)) / cell_size);
+
     printf("Celda tocada: (%d, %d)\n", cell_x_index, cell_y_index);
+
     cells[cell_x_index][cell_y_index] = 1;
     cellsCopy[cell_x_index][cell_y_index] = 1;
 }
@@ -263,33 +268,44 @@ void pixel_to_normalized_coordinates(double x_pixel, double y_pixel,  double *no
     *normalized_y = diff_y / center_y;  
 
 }
-void update_cells_on_drag(double normalized_x, double normalized_y) {
+void update_cells_on_drag(double normalized_x, double normalized_y) 
+{
     double cell_size = CELL_SIZE;
 
     double centered_x = normalized_x;
     double centered_y = normalized_y;
     int cell_x_index = (int)((centered_x + (1 - CELL_SIZE)) / cell_size);
     int cell_y_index = (int)((centered_y + (1 - CELL_SIZE)) / cell_size);
+
     printf("Celda tocada: (%d, %d)\n", cell_x_index, cell_y_index);
+
     cells[cell_x_index][cell_y_index] = 1;
     cellsCopy[cell_x_index][cell_y_index] = 1;
 }
-void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
+
+void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) 
+{
     double normalized_x, normalized_y;
     pixel_to_normalized_coordinates(xpos, ypos, &normalized_x, &normalized_y);
     update_cells_on_drag(normalized_x, normalized_y);
+
     printf("\n----->(%f, %f)\n", normalized_x, normalized_y);
+
     drawSquare(true, -1 * normalized_x, -1 + normalized_y);
 }
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
-    if (button == GLFW_MOUSE_BUTTON_LEFT) {
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) 
+{
+    if (button == GLFW_MOUSE_BUTTON_LEFT)
         if (action == GLFW_PRESS) {
             double xpos, ypos;
             glfwGetCursorPos(window, &xpos, &ypos);
             double normalized_x, normalized_y;
             pixel_to_normalized_coordinates(xpos, ypos, &normalized_x, &normalized_y);
             update_cells_on_drag(normalized_x, normalized_y);
+
             printf("\n----->(%f, %f)\n", normalized_x, normalized_y);
+
             drawSquare(true, -1 * normalized_x, -1 + normalized_y);
             // Register the cursor position callback to track dragging
             glfwSetCursorPosCallback(window, cursor_position_callback);
@@ -297,8 +313,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
             // Reset cursor position callback when mouse button is released
             glfwSetCursorPosCallback(window, NULL);
         }
-    }
 }
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) 
 {
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
