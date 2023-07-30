@@ -2,10 +2,10 @@
 CC := gcc
 CFLAGS := -I../include
 LDFLAGS := -L../lib
-LDLIBS := -lglfw3dll -lopengl32 -lgdi32
+LDLIBS := -lopengl32 -lgdi32 -lglfw3dll -lglfw3
 SRC_DIR := ../src
 BIN_DIR := .
-OBJ_DIR = obj
+OBJ_DIR := obj
 
 # Lista de archivos fuente
 SOURCES := $(wildcard $(SRC_DIR)/*.c)
@@ -23,6 +23,7 @@ $(EXECUTABLE): $(OBJECTS)
 # Regla para compilar cada archivo fuente a un archivo objeto
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
+
 # Regla para limpiar los archivos objeto y el ejecutable
 clean:
 	rm -f $(OBJECTS) $(EXECUTABLE)
