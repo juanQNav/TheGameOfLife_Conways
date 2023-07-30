@@ -6,10 +6,10 @@
 #include <stdbool.h>
 #include <math.h>
 
-#define VERTICAL_SIZE 1400
-#define HORIZONTAL_SIZE 1400
+#define VERTICAL_SIZE 1550
+#define HORIZONTAL_SIZE 1550
 
-#define NUMBER_CELLS 80
+#define NUMBER_CELLS 60
 #define CELL_SIZE (1.959/NUMBER_CELLS)
 
 //global var
